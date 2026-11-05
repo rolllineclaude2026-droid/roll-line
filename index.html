@@ -224,12 +224,17 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 /* request modal */
 .modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,20,70,.75)}
 .modal.on{display:flex}
-.mbox{background:#fff;width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow:auto;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.mbox{background:#fff;width:100%;max-width:680px;max-height:calc(100vh - 32px);overflow:auto;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.35)}
 .mhead{background:var(--red);color:#fff;padding:24px 56px 22px 28px;clip-path:polygon(0 0,100% 0,100% 100%,0 calc(100% - 10px))}
 .mhead h3{font-size:22px;text-transform:uppercase}
 .mhead p{margin:6px 0 0;font-size:14px;color:#ffe1e3}
 .mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:22px;cursor:pointer;line-height:1}
 .mclose:hover{background:rgba(255,255,255,.3)}
+.yaform{padding:8px 16px 18px;position:relative}
+.yaform iframe{display:block;width:100%;min-height:560px;border:0}
+.yaload{position:absolute;left:0;right:0;top:40px;text-align:center;color:var(--muted);font-weight:600}
+.yaalt{font-size:13px;color:var(--muted);margin:8px 12px 0;text-align:center}
+.yaalt a{color:var(--blue);font-weight:700}
 form.req{padding:24px 28px 28px;display:grid;gap:14px}
 .req label{display:grid;gap:6px;font-size:13px;font-weight:700;color:var(--ink)}
 .req label span.o{font-weight:500;color:var(--muted)}
@@ -540,29 +545,8 @@ form.req{padding:24px 28px 28px;display:grid;gap:14px}
   <div class="mbox">
     <div class="mhead"><h3 id="reqTitle">Получить консультацию</h3><p>Оставьте контакты — менеджер перезвонит в рабочее время (Пн–Пт 9:00–19:00 мск)</p></div>
     <button class="mclose" type="button" aria-label="Закрыть" data-close>×</button>
-    <form class="req" id="reqForm" novalidate>
-      <label>Ваше имя<input name="Имя" autocomplete="name" required placeholder="Как к вам обращаться"></label>
-      <div class="row">
-        <label>Телефон<input name="Телефон" type="tel" autocomplete="tel" required placeholder="+7 ___ ___-__-__"></label>
-        <label><span>Город / страна <span class="o">(необяз.)</span></span><input name="Город" autocomplete="address-level2" placeholder="Например, Казань"></label>
-      </div>
-      <label>Какая линия интересует
-        <select name="Линия">
-          <option>Пока не определился(-ась)</option>
-          <option>Легендус — 5 печей</option>
-          <option>Легендус — 4 печи</option>
-          <option>Легендус — 3 печи</option>
-          <option>Гарни — тандырный лаваш</option>
-        </select>
-      </label>
-      <label><span>Комментарий <span class="o">(необяз.)</span></span><textarea name="Комментарий" placeholder="Ваш вопрос, помещение, планируемый объём"></textarea></label>
-      <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="cap"><small>Проверка,<br>что вы не робот:</small><span class="q" id="capQ" aria-live="polite"></span><input id="capA" inputmode="numeric" autocomplete="off" aria-label="Ответ на пример" placeholder="?"><button type="button" id="capR" aria-label="Другой пример" title="Другой пример">↻</button></div>
-      <label class="agree"><input type="checkbox" name="Согласие" required>Я согласен(-на) на обработку персональных данных для связи со мной</label>
-      <div class="err" id="reqErr" role="alert"></div>
-      <button class="btn btn-red" type="submit">Отправить заявку <span class="arrow">→</span></button>
-    </form>
-    <div class="ok" id="reqOk"><i>✓</i><h4>Заявка отправлена</h4><p>Спасибо! Менеджер свяжется с вами в ближайшее рабочее время.</p><button class="btn btn-blue" type="button" data-close style="border:0;cursor:pointer;font-family:var(--f)">Закрыть</button></div>
+    <div class="yaform"><div class="yaload" id="yaLoad">Загружаем форму…</div><iframe id="yaFrame" title="Заявка на консультацию" data-src="https://forms.yandex.ru/u/6aecbe742c4f8985457e1253/?iframe=1" frameborder="0" name="ya-form-6aecbe742c4f8985457e1253" width="100%"></iframe>
+      <p class="yaalt">Если форма не открылась — позвоните: <a href="tel:88003332495">8 800 333-24-95</a> или <a href="https://forms.yandex.ru/u/6aecbe742c4f8985457e1253/" target="_blank" rel="noopener">откройте форму в новом окне</a>.</p></div></div>
   </div>
 </div>
 <div class="zoom" id="zoom"><img alt=""></div>
@@ -578,36 +562,15 @@ document.querySelectorAll('.scheme').forEach(function(s){s.addEventListener('cli
 z.addEventListener('click',function(){z.classList.remove('on')});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')z.classList.remove('on')});
 
-// ---- Заявка ----
-var REQ_EMAIL='roll-line@yandex.ru'; // куда приходят заявки
-var capX=0,capT=Date.now();
-function newCap(){var a=2+Math.floor(Math.random()*8),b=1+Math.floor(Math.random()*9);capX=a+b;document.getElementById('capQ').textContent=a+' + '+b+' =';document.getElementById('capA').value=''}
-newCap();document.getElementById('capR').addEventListener('click',newCap);
-var md=document.getElementById('request'),fm=document.getElementById('reqForm'),er=document.getElementById('reqErr'),ok=document.getElementById('reqOk'),lastFocus=null;
-function openReq(){lastFocus=document.activeElement;capT=Date.now();md.classList.add('on');document.body.style.overflow='hidden';setTimeout(function(){fm.querySelector('input').focus()},50)}
+// ---- Заявка (Яндекс Формы) ----
+var md=document.getElementById('request'),yf=document.getElementById('yaFrame'),lastFocus=null,yaLoaded=false;
+function loadYa(){if(yaLoaded)return;yaLoaded=true;var s=document.createElement('script');s.src='https://forms.yandex.ru/_static/embed.js';document.body.appendChild(s);yf.addEventListener('load',function(){var l=document.getElementById('yaLoad');if(l)l.style.display='none'});yf.src=yf.dataset.src}
+function openReq(){lastFocus=document.activeElement;loadYa();md.classList.add('on');document.body.style.overflow='hidden';setTimeout(function(){md.querySelector('.mclose').focus()},50)}
 function closeReq(){md.classList.remove('on');document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
 document.querySelectorAll('[data-open]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();openReq()})});
 md.addEventListener('click',function(e){if(e.target===md||e.target.hasAttribute('data-close'))closeReq()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&md.classList.contains('on'))closeReq()});
 if(location.hash==='#request')openReq();
-fm.addEventListener('submit',function(e){
-  e.preventDefault();er.textContent='';
-  var name=fm['Имя'].value.trim(),tel=fm['Телефон'].value.trim(),digits=tel.replace(/\D/g,'');
-  if(!name){er.textContent='Укажите, пожалуйста, имя.';fm['Имя'].focus();return}
-  if(digits.length<10){er.textContent='Проверьте номер телефона.';fm['Телефон'].focus();return}
-  if(!fm['Согласие'].checked){er.textContent='Нужно согласие на обработку персональных данных.';return}
-  if(parseInt(document.getElementById('capA').value,10)!==capX){er.textContent='Неверный ответ на пример — попробуйте ещё раз.';newCap();document.getElementById('capA').focus();return}
-  if(fm._honey.value||Date.now()-capT<3000){er.textContent='Слишком быстро — проверьте данные и отправьте ещё раз.';return}
-  var btn=fm.querySelector('button[type=submit]');btn.disabled=true;btn.firstChild.nodeValue='Отправляем… ';
-  var data={_subject:'Заявка с сайта roll-line.ru: '+name,_template:'table',_captcha:'false'};
-  ['Имя','Телефон','Город','Линия','Комментарий'].forEach(function(k){data[k]=fm[k].value.trim()});
-  data['Страница']=location.href;
-  fetch('https://formsubmit.co/ajax/'+REQ_EMAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(data)})
-  .then(function(r){return r.json().then(function(j){if(!r.ok||String(j.success)!=='true')throw 0})})
-  .then(function(){fm.style.display='none';ok.style.display='block';fm.reset();newCap()})
-  .catch(function(){er.innerHTML='Не удалось отправить заявку. Позвоните нам: <a href="tel:88003332495">8 800 333-24-95</a>'})
-  .finally(function(){btn.disabled=false;btn.firstChild.nodeValue='Отправить заявку '});
-});
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)})}else{document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in')})}
 </script>
 </body>
