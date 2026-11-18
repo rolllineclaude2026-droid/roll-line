@@ -263,6 +263,16 @@ form.req{padding:24px 28px 28px;display:grid;gap:14px}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 </style>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();
+for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+ym(36704250,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/36704250" style="position:absolute;left:-9999px;" alt=""></div></noscript>
+<!-- /Yandex.Metrika counter -->
 </head>
 <body>
 
@@ -572,6 +582,13 @@ md.addEventListener('click',function(e){if(e.target===md||e.target.hasAttribute(
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&md.classList.contains('on'))closeReq()});
 if(location.hash==='#request')openReq();
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)})}else{document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in')})}
+</script>
+<script>
+/* Цели Метрики: открытие формы заявки, клик по телефону, клик по почте */
+(function(){function g(n){try{ym(36704250,'reachGoal',n)}catch(e){}}
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;
+if(a.hasAttribute('data-open'))g('open_form');
+var h=a.getAttribute('href')||'';if(h.indexOf('tel:')===0)g('phone_click');else if(h.indexOf('mailto:')===0)g('email_click');},true);})();
 </script>
 </body>
 </html>
